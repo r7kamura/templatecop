@@ -4,7 +4,6 @@ require 'rubocop'
 
 module Templatecop
   class RuboCopConfigGenerator
-    DEFAULT_ADDITIONAL_CONFIG_PATH1 = '.templatecop.yml'
     DEFAULT_ADDITIONAL_CONFIG_PATH2 = '.rubocop.yml'
 
     # @param [String] additional_config_file_path
@@ -44,8 +43,8 @@ module Templatecop
         @additional_config = \
           if @additional_config_file_path
             ::RuboCop::ConfigLoader.load_file(@additional_config_file_path)
-          elsif ::File.exist?(DEFAULT_ADDITIONAL_CONFIG_PATH1)
-            ::RuboCop::ConfigLoader.load_file(DEFAULT_ADDITIONAL_CONFIG_PATH1)
+          elsif ::File.exist?(default_additional_config_path1)
+            ::RuboCop::ConfigLoader.load_file(default_additional_config_path1)
           elsif ::File.exist?(DEFAULT_ADDITIONAL_CONFIG_PATH2)
             ::RuboCop::ConfigLoader.load_file(DEFAULT_ADDITIONAL_CONFIG_PATH2)
           end
@@ -60,6 +59,11 @@ module Templatecop
     # @return [String]
     def templatecop_default_config_file_path
       @templatecop_default_config_file_path ||= ::File.expand_path('../../default.yml', __dir__)
+    end
+
+    # @return [String]
+    def default_additional_config_path1
+      @default_additional_config_path1 ||= "#{self.class.name.split('::').first.downcase}.yml"
     end
   end
 end

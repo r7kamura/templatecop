@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-require 'rainbow'
+require 'optparse'
 require 'rubocop'
 
 module Templatecop
+  # Provide command-line interface.
+  # Inherit me, and call it from your executable.
+  # @example
+  #   Yourcop::Cli.new(@argv).call
   class Cli
     def initialize(argv)
       @argv = argv.dup
     end
 
     def call
-      options = parse!
+      options = parse_options!
       formatter = ::RuboCop::Formatter::ProgressFormatter.new($stdout, color: options[:color])
       rubocop_config = RuboCopConfigGenerator.new(additional_config_file_path: options[:additional_config_file_path]).call
       file_paths = PathFinder.new(patterns: @argv).call
@@ -27,16 +31,26 @@ module Templatecop
 
     private
 
+    # @return [String]
+    def first_default_configuration_path
+      "#{executable_name}.yml"
+    end
+
+    # @return [String]
+    def executable_name
+      self.class.name.split('::').first.downcase
+    end
+
     # @return [Hash]
-    def parse!
+    def parse_options!
       options = {}
       parser = ::OptionParser.new
-      parser.banner = 'Usage: templatecop [options] [file1, file2, ...]'
+      parser.banner = "Usage: #{executable_name} [options] [file1, file2, ...]"
       parser.version = VERSION
       parser.on('-a', '--auto-correct', 'Auto-correct offenses.') do
         options[:auto_correct] = true
       end
-      parser.on('-c', '--config=', 'Specify configuration file. (default: .templatecop.yml or .rubocop.yml)') do |file_path|
+      parser.on('-c', '--config=', "Specify configuration file. (default: #{first_default_configuration_path} or .rubocop.yml)") do |file_path|
         options[:additional_config_file_path] = file_path
       end
       parser.on('--[no-]color', 'Force color output on or off.') do |value|
