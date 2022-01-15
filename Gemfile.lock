@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     templatecop (0.12.0)
+      parser
+      rubocop (>= 0.87)
 
 GEM
   remote: https://rubygems.org/
