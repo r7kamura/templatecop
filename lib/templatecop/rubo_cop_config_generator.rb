@@ -3,12 +3,16 @@
 require 'rubocop'
 
 module Templatecop
+  # Generate RuboCop::Config.
   class RuboCopConfigGenerator
-    DEFAULT_ADDITIONAL_CONFIG_PATH2 = '.rubocop.yml'
-
-    # @param [String] additional_config_file_path
-    def initialize(additional_config_file_path: nil)
-      @additional_config_file_path = additional_config_file_path
+    # @param [String] default_configuration_path
+    # @param [Array<String>] user_configuration_paths
+    def initialize(
+      default_configuration_path:,
+      user_configuration_paths:
+    )
+      @default_configuration_path = default_configuration_path
+      @user_configuration_paths = user_configuration_paths
     end
 
     # @return [RuboCop::Config]
@@ -20,7 +24,7 @@ module Templatecop
 
     # @return [String]
     def loaded_path
-      @additional_config_file_path || templatecop_default_config_file_path
+      @user_config_file_path || @default_configuration_path
     end
 
     # @return [RuboCop::Config]
@@ -30,40 +34,33 @@ module Templatecop
 
     # @return [Hash]
     def merged_config_hash
-      result = templatecop_default_config
-      result = ::RuboCop::ConfigLoader.merge(result, additional_config) if additional_config
+      result = default_config
+      result = ::RuboCop::ConfigLoader.merge(result, user_config) if user_config
       result
     end
 
     # @return [RuboCop::Config, nil]
-    def additional_config
-      if instance_variable_defined?(:@additional_config)
-        @additional_config
+    def user_config
+      if instance_variable_defined?(:@user_config)
+        @user_config
       else
-        @additional_config = \
-          if @additional_config_file_path
-            ::RuboCop::ConfigLoader.load_file(@additional_config_file_path)
-          elsif ::File.exist?(default_additional_config_path1)
-            ::RuboCop::ConfigLoader.load_file(default_additional_config_path1)
-          elsif ::File.exist?(DEFAULT_ADDITIONAL_CONFIG_PATH2)
-            ::RuboCop::ConfigLoader.load_file(DEFAULT_ADDITIONAL_CONFIG_PATH2)
+        @user_config = \
+          if (path = user_configuration_path)
+            ::RuboCop::ConfigLoader.load_file(path)
           end
       end
     end
 
     # @return [RuboCop::Config]
-    def templatecop_default_config
-      ::RuboCop::ConfigLoader.load_file(templatecop_default_config_file_path)
+    def default_config
+      ::RuboCop::ConfigLoader.load_file(@default_configuration_path)
     end
 
-    # @return [String]
-    def templatecop_default_config_file_path
-      @templatecop_default_config_file_path ||= ::File.expand_path('../../default.yml', __dir__)
-    end
-
-    # @return [String]
-    def default_additional_config_path1
-      @default_additional_config_path1 ||= "#{self.class.name.split('::').first.downcase}.yml"
+    # @return [String, nil]
+    def user_configuration_path
+      @user_configuration_paths.find do |path|
+        ::File.exist?(path)
+      end
     end
   end
 end

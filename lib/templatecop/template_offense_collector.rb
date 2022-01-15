@@ -6,11 +6,19 @@ module Templatecop
     # @param [Boolean] auto_correct
     # @param [String] file_path Template file path
     # @param [RuboCop::Config] rubocop_config
+    # @param [#call] ruby_extractor
     # @param [String] source Template code
-    def initialize(auto_correct:, file_path:, rubocop_config:, source:)
+    def initialize(
+      auto_correct:,
+      file_path:,
+      rubocop_config:,
+      ruby_extractor:,
+      source:
+    )
       @auto_correct = auto_correct
       @file_path = file_path
       @rubocop_config = rubocop_config
+      @ruby_extractor = ruby_extractor
       @source = source
     end
 
@@ -37,10 +45,10 @@ module Templatecop
 
     # @return [Array<Hash>]
     def snippets
-      RubyExtractor.new(
+      @ruby_extractor.call(
         file_path: @file_path,
         source: @source
-      ).call
+      )
     end
   end
 end

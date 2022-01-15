@@ -7,16 +7,19 @@ module Templatecop
     # @param [Array<String>] file_paths
     # @param [Object] formatter
     # @param [RuboCop::Config] rubocop_config
+    # @param [#call] ruby_extractor
     def initialize(
       auto_correct:,
       file_paths:,
       formatter:,
-      rubocop_config:
+      rubocop_config:,
+      ruby_extractor:
     )
       @auto_correct = auto_correct
       @file_paths = file_paths
       @formatter = formatter
       @rubocop_config = rubocop_config
+      @ruby_extractor = ruby_extractor
     end
 
     # @return [Array<RuboCop::Cop::Offense>]
@@ -51,6 +54,7 @@ module Templatecop
         auto_correct: auto_correct,
         file_path: file_path,
         rubocop_config: rubocop_config,
+        ruby_extractor: @ruby_extractor,
         source: source
       ).call
     end

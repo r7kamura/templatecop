@@ -4,26 +4,64 @@ require 'optparse'
 require 'rubocop'
 
 module Templatecop
-  # Provide command-line interface.
-  # Inherit me, and call it from your executable.
+  # Call this from your executable.
   # @example
-  #   Yourcop::Cli.new(@argv).call
+  #   Templatecop.call(
+  #     default_configuration_path: File.expand_path('../default.yml', __dir__),
+  #     executable_name: 'slimcop',
+  #     ruby_extractor: Slimcop::RubyExtractor.new,
+  #     user_configuration_paths: %w[.slimcop.yml .rubocop.yml]
+  #   )
   class Cli
-    def initialize(argv)
-      @argv = argv.dup
+    class << self
+      # @param [Array<String>] argv
+      # @param [String] default_configuration_path (e.g. "default.yml")
+      # @param [String] executable_name (e.g. "slimcop")
+      # @param [#call] ruby_extractor An object that converts template code into Ruby codes.
+      # @param [Array<String>] user_configuration_paths
+      def call(
+        executable_name:, ruby_extractor:, user_configuration_paths:, argv: ::ARGV,
+        default_configuration_path: nil
+      )
+        new(
+          argv: argv,
+          default_configuration_path: default_configuration_path,
+          executable_name: executable_name,
+          ruby_extractor: ruby_extractor,
+          user_configuration_paths: user_configuration_paths
+        ).call
+      end
+    end
+
+    def initialize(
+      argv:,
+      default_configuration_path:,
+      executable_name:,
+      ruby_extractor:,
+      user_configuration_paths:
+    )
+      @argv = argv
+      @default_configuration_path = default_configuration_path
+      @executable_name = executable_name
+      @ruby_extractor = ruby_extractor
+      @user_configuration_paths = user_configuration_paths
     end
 
     def call
       options = parse_options!
       formatter = ::RuboCop::Formatter::ProgressFormatter.new($stdout, color: options[:color])
-      rubocop_config = RuboCopConfigGenerator.new(additional_config_file_path: options[:additional_config_file_path]).call
+      rubocop_config = RuboCopConfigGenerator.new(
+        default_configuration_path: @default_configuration_path,
+        user_configuration_paths: ([options[:additional_config_file_path]] + @user_configuration_paths).compact
+      ).call
       file_paths = PathFinder.new(patterns: @argv).call
 
       offenses = Runner.new(
         auto_correct: options[:auto_correct],
         file_paths: file_paths,
         formatter: formatter,
-        rubocop_config: rubocop_config
+        rubocop_config: rubocop_config,
+        ruby_extractor: @ruby_extractor
       ).call
 
       exit(offenses.empty? ? 0 : 1)
@@ -31,32 +69,22 @@ module Templatecop
 
     private
 
-    # @return [String]
-    def first_default_configuration_path
-      "#{executable_name}.yml"
-    end
-
-    # @return [String]
-    def executable_name
-      self.class.name.split('::').first.downcase
-    end
-
     # @return [Hash]
     def parse_options!
       options = {}
       parser = ::OptionParser.new
-      parser.banner = "Usage: #{executable_name} [options] [file1, file2, ...]"
+      parser.banner = "Usage: #{@executable_name} [options] [file1, file2, ...]"
       parser.version = VERSION
       parser.on('-a', '--auto-correct', 'Auto-correct offenses.') do
         options[:auto_correct] = true
       end
-      parser.on('-c', '--config=', "Specify configuration file. (default: #{first_default_configuration_path} or .rubocop.yml)") do |file_path|
+      parser.on('-c', '--config=', "Specify configuration file. (default: #{@default_configuration_path} or .rubocop.yml)") do |file_path|
         options[:additional_config_file_path] = file_path
       end
       parser.on('--[no-]color', 'Force color output on or off.') do |value|
         options[:color] = value
       end
-      parser.parse!(@argv)
+      parser.parse(@argv)
       options
     end
   end
