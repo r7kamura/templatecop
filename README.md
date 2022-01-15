@@ -1,5 +1,8 @@
 # Templatecop
 
+[![Gem Version](https://badge.fury.io/rb/templatecop.svg)](https://rubygems.org/gems/templatecop)
+[![test](https://github.com/r7kamura/templatecop/actions/workflows/test.yml/badge.svg)](https://github.com/r7kamura/templatecop/actions/workflows/test.yml)
+
 [RuboCop](https://github.com/rubocop/rubocop) runner framework for template language.
 
 ## Installation
