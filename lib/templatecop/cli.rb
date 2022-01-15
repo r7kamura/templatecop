@@ -24,7 +24,7 @@ module Templatecop
         executable_name:,
         ruby_extractor:,
         user_configuration_paths:,
-        argv: ::ARGV,
+        argv: ::ARGV.dup,
         default_configuration_path: nil,
         default_path_patterns: []
       )
@@ -95,7 +95,7 @@ module Templatecop
       parser.on('--[no-]color', 'Force color output on or off.') do |value|
         options[:color] = value
       end
-      parser.parse(@argv)
+      parser.parse!(@argv)
       options
     end
   end
