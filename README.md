@@ -1,6 +1,6 @@
 # Templatecop
 
-RuboCop runner framework for template language.
+[RuboCop](https://github.com/rubocop/rubocop) runner framework for template language.
 
 ## Installation
 
