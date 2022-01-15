@@ -6,13 +6,16 @@ module Templatecop
   # Generate RuboCop::Config.
   class RuboCopConfigGenerator
     # @param [String] default_configuration_path
-    # @param [Array<String>] user_configuration_paths
+    # @param [String, nil] forced_configuration_path
+    # @param [Array<String>] implicit_configuration_paths
     def initialize(
       default_configuration_path:,
-      user_configuration_paths:
+      forced_configuration_path:,
+      implicit_configuration_paths:
     )
       @default_configuration_path = default_configuration_path
-      @user_configuration_paths = user_configuration_paths
+      @forced_configuration_path = forced_configuration_path
+      @implicit_configuration_paths = implicit_configuration_paths
     end
 
     # @return [RuboCop::Config]
@@ -24,7 +27,7 @@ module Templatecop
 
     # @return [String]
     def loaded_path
-      @user_config_file_path || @default_configuration_path
+      @forced_configuration_path || implicit_configuration_path || @default_configuration_path
     end
 
     # @return [RuboCop::Config]
@@ -45,7 +48,9 @@ module Templatecop
         @user_config
       else
         @user_config = \
-          if (path = user_configuration_path)
+          if @forced_configuration_path
+            ::RuboCop::ConfigLoader.load_file(@forced_configuration_path)
+          elsif (path = implicit_configuration_path)
             ::RuboCop::ConfigLoader.load_file(path)
           end
       end
@@ -57,9 +62,13 @@ module Templatecop
     end
 
     # @return [String, nil]
-    def user_configuration_path
-      @user_configuration_paths.find do |path|
-        ::File.exist?(path)
+    def implicit_configuration_path
+      if instance_variable_defined?(:@implicit_configuration_path)
+        @implicit_configuration_path
+      else
+        @implicit_configuration_path = @implicit_configuration_paths.find do |path|
+          ::File.exist?(path)
+        end
       end
     end
   end
