@@ -24,4 +24,7 @@ gem install templatecop
 
 ## Usage
 
-TBD.
+See these examples:
+
+- <https://github.com/r7kamura/erbcop>
+- <https://github.com/r7kamura/slimcop>
