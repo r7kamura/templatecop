@@ -5,12 +5,13 @@ require 'pathname'
 module Templatecop
   # Collect file paths from given path patterns.
   class PathFinder
-    DEFAULT_PATH_PATTERNS = %w[
-      **/*.template
-    ].freeze
-
+    # @param [Array<String>] default_patterns
     # @param [Array<String>] patterns Patterns normally given as CLI arguments (e.g. `["app/views/**/*.html.template"]`).
-    def initialize(patterns:)
+    def initialize(
+      default_patterns:,
+      patterns:
+    )
+      @default_patterns = default_patterns
       @patterns = patterns
     end
 
@@ -26,7 +27,7 @@ module Templatecop
     # @return [Array<String>]
     def patterns
       if @patterns.empty?
-        DEFAULT_PATH_PATTERNS
+        @default_patterns
       else
         @patterns
       end

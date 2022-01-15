@@ -16,16 +16,22 @@ module Templatecop
     class << self
       # @param [Array<String>] argv
       # @param [String] default_configuration_path (e.g. "default.yml")
+      # @param [Array<String>] default_path_patterns
       # @param [String] executable_name (e.g. "slimcop")
       # @param [#call] ruby_extractor An object that converts template code into Ruby codes.
       # @param [Array<String>] user_configuration_paths
       def call(
-        executable_name:, ruby_extractor:, user_configuration_paths:, argv: ::ARGV,
-        default_configuration_path: nil
+        executable_name:,
+        ruby_extractor:,
+        user_configuration_paths:,
+        argv: ::ARGV,
+        default_configuration_path: nil,
+        default_path_patterns: []
       )
         new(
           argv: argv,
           default_configuration_path: default_configuration_path,
+          default_path_patterns: default_path_patterns,
           executable_name: executable_name,
           ruby_extractor: ruby_extractor,
           user_configuration_paths: user_configuration_paths
@@ -36,12 +42,14 @@ module Templatecop
     def initialize(
       argv:,
       default_configuration_path:,
+      default_path_patterns:,
       executable_name:,
       ruby_extractor:,
       user_configuration_paths:
     )
       @argv = argv
       @default_configuration_path = default_configuration_path
+      @default_path_patterns = default_path_patterns
       @executable_name = executable_name
       @ruby_extractor = ruby_extractor
       @user_configuration_paths = user_configuration_paths
@@ -54,7 +62,10 @@ module Templatecop
         default_configuration_path: @default_configuration_path,
         user_configuration_paths: ([options[:additional_config_file_path]] + @user_configuration_paths).compact
       ).call
-      file_paths = PathFinder.new(patterns: @argv).call
+      file_paths = PathFinder.new(
+        default_patterns: @default_path_patterns,
+        patterns: @argv
+      ).call
 
       offenses = Runner.new(
         auto_correct: options[:auto_correct],
