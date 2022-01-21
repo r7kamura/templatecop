@@ -50,6 +50,44 @@ module Templatecop
       )
     end
 
+    # @note For Parallel.
+    # @return [Hash]
+    def marshal_dump
+      {
+        begin_pos: @rubocop_offense.location.begin_pos,
+        cop_name: @rubocop_offense.cop_name,
+        end_pos: @rubocop_offense.location.end_pos,
+        file_path: @file_path,
+        message: @rubocop_offense.message.dup.force_encoding(::Encoding::UTF_8).scrub,
+        offset: @offset,
+        severity: @rubocop_offense.severity.to_s,
+        source: @source,
+        status: %i[corrected corrected_with_todo].include?(@rubocop_offense.status) ? :uncorrected : @rubocop_offense.status
+      }
+    end
+
+    # @note For Parallel.
+    # @param [Hash] hash
+    def marshal_load(hash)
+      @file_path = hash[:file_path]
+      @offset = hash[:offset]
+      @rubocop_offense = ::RuboCop::Cop::Offense.new(
+        hash[:severity],
+        ::Parser::Source::Range.new(
+          ::Parser::Source::Buffer.new(
+            @file_path,
+            source: @source
+          ),
+          hash[:begin_pos],
+          hash[:end_pos]
+        ),
+        hash[:message],
+        hash[:cop_name],
+        hash[:status].to_sym
+      )
+      @source = hash[:source]
+    end
+
     private
 
     # @return [Parser::Source::Buffer]

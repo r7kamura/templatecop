@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     templatecop (0.1.0)
+      parallel
       parser
       rubocop (>= 0.87)
 
@@ -44,6 +45,16 @@ GEM
     rubocop-rspec (2.7.0)
       rubocop (~> 1.19)
     ruby-progressbar (1.11.0)
+    slimcop (0.13.1)
+      slimi (>= 0.5.1)
+      templatecop
+    slimi (0.7.1)
+      temple
+      thor
+      tilt
+    temple (0.8.2)
+    thor (1.2.1)
+    tilt (2.0.10)
     unicode-display_width (2.1.0)
 
 PLATFORMS
@@ -54,6 +65,7 @@ DEPENDENCIES
   rspec
   rubocop
   rubocop-rspec
+  slimcop
   templatecop!
 
 BUNDLED WITH
