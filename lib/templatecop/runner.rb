@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'parallel'
+require 'stringio'
+
 module Templatecop
   # Run investigation and auto-correcttion.
   class Runner
@@ -25,9 +28,11 @@ module Templatecop
     # @return [Array<RuboCop::Cop::Offense>]
     def call
       on_started
-      offenses = investigate_and_correct
-      on_finished
-      offenses
+      result = run_in_parallel
+      on_finished(result)
+      result.flat_map do |(_, offenses)|
+        offenses
+      end
     end
 
     private
@@ -59,9 +64,9 @@ module Templatecop
       ).call
     end
 
-    # @return [Array<RuboCop::Cop::Offense>]
-    def investigate_and_correct
-      @file_paths.flat_map do |file_path|
+    # @return [Hash]
+    def run_in_parallel
+      ::Parallel.map(@file_paths) do |file_path|
         offenses_per_file = []
         max_trials_count.times do
           on_file_started(file_path)
@@ -84,7 +89,7 @@ module Templatecop
           )
         end
         on_file_finished(file_path, offenses_per_file)
-        offenses_per_file
+        [file_path, offenses_per_file]
       end
     end
 
@@ -112,7 +117,18 @@ module Templatecop
       @formatter.file_finished(file_path, offenses)
     end
 
-    def on_finished
+    # We need to adjust @formatter's status (in silently)
+    # because @formatter.on_file_* was called in child process, not in this process.
+    # @param [Array] result
+    def on_finished(result)
+      original = @formatter.output
+      @formatter.instance_variable_set(:@output, ::StringIO.new)
+      result.each do |(file_path, offenses)|
+        on_file_started(file_path)
+        on_file_finished(file_path, offenses)
+      end
+      @formatter.instance_variable_set(:@output, original)
+
       @formatter.finished(@file_paths)
     end
   end
