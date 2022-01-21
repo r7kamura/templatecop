@@ -62,7 +62,7 @@ module Templatecop
         offset: @offset,
         severity: @rubocop_offense.severity.to_s,
         source: @source,
-        status: %i[corrected corrected_with_todo].include?(@rubocop_offense.status) ? :uncorrected : @rubocop_offense.status
+        status: @rubocop_offense.status
       }
     end
 
