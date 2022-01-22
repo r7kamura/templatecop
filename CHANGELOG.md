@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.1 - 2022-01-22
+
 ### Fixed
 
 - Prevent duplicate offenses from being reported.

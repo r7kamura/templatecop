@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    templatecop (0.2.0)
+    templatecop (0.2.1)
       parallel
       parser
       rubocop (>= 0.87)
