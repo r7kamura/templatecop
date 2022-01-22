@@ -78,7 +78,7 @@ module Templatecop
             source: source
           )
           offenses_per_file |= offenses
-          break if offenses.empty?
+          break if offenses.select(&:correctable?).empty?
 
           next unless @auto_correct
 
