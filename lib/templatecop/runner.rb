@@ -77,7 +77,7 @@ module Templatecop
             rubocop_config: @rubocop_config,
             source: source
           )
-          offenses_per_file += offenses
+          offenses_per_file |= offenses
           break if offenses.empty?
 
           next unless @auto_correct

@@ -23,6 +23,8 @@ module Templatecop
         corrected_with_todo?
         corrected?
         corrector
+        eql?
+        hash
         highlighted_area
         line
         message
