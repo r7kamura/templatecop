@@ -19,6 +19,7 @@ module Templatecop
       %i[
         column
         column_length
+        cop_name
         correctable?
         corrected_with_todo?
         corrected?
