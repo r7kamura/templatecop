@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.2 - 2022-01-24
+
 ### Fixed
 
 - Fix undefined method cop_name error.
