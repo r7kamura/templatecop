@@ -30,4 +30,5 @@ gem install templatecop
 See these examples:
 
 - <https://github.com/r7kamura/erbcop>
+- <https://github.com/r7kamura/hamlcop>
 - <https://github.com/r7kamura/slimcop>
