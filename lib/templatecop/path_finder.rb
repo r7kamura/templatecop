@@ -18,7 +18,9 @@ module Templatecop
     # @return [Array<String>]
     def call
       patterns.flat_map do |pattern|
-        ::Pathname.glob(pattern).select(&:file?).map(&:to_s)
+        ::Pathname.glob(pattern).select(&:file?).map do |pathname|
+          pathname.expand_path.to_s
+        end
       end.uniq.sort
     end
 

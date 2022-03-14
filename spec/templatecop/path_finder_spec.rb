@@ -23,7 +23,9 @@ RSpec.describe Templatecop::PathFinder do
       end
 
       it 'returns expected file paths' do
-        is_expected.to eq(patterns)
+        is_expected.to eq(
+          [File.expand_path('spec/fixtures/dummy.slim')]
+        )
       end
     end
 
@@ -33,7 +35,9 @@ RSpec.describe Templatecop::PathFinder do
       end
 
       it 'returns expected file paths' do
-        is_expected.to eq(%w[spec/fixtures/dummy.slim])
+        is_expected.to eq(
+          [File.expand_path('spec/fixtures/dummy.slim')]
+        )
       end
     end
 
@@ -53,7 +57,9 @@ RSpec.describe Templatecop::PathFinder do
       end
 
       it 'uses default patterns' do
-        is_expected.to eq(%w[spec/fixtures/dummy.slim])
+        is_expected.to eq(
+          [File.expand_path('spec/fixtures/dummy.slim')]
+        )
       end
     end
   end

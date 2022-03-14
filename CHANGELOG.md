@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Support Exclude and Include config.
+
 ## 0.2.2 - 2022-01-24
 
 ### Fixed
