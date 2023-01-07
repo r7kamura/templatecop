@@ -32,7 +32,7 @@ RSpec.describe Templatecop::Runner do
     end
 
     let(:rubocop_config) do
-      ::RuboCop::ConfigLoader.default_configuration
+      RuboCop::ConfigLoader.default_configuration
     end
 
     let(:ruby_extractor) do

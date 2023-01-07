@@ -30,7 +30,7 @@ RSpec.describe Templatecop::RubyOffenseCollector do
     context 'with rubocop:todo comment' do
       let(:source) do
         <<~RUBY
-          "a" \# rubocop:todo Style/StringLiterals
+          "a" # rubocop:todo Style/StringLiterals
         RUBY
       end
 
@@ -42,12 +42,26 @@ RSpec.describe Templatecop::RubyOffenseCollector do
     context 'with rubocop:disable comment' do
       let(:source) do
         <<~RUBY
-          "a" \# rubocop:disable Style/StringLiterals
+          "a" # rubocop:disable Style/StringLiterals
         RUBY
       end
 
       it 'excludes disabled offenses' do
         expect(subject).to be_empty
+      end
+    end
+
+    context 'with rubocop:disable comment with missing cop enable directive' do
+      let(:source) do
+        <<~RUBY
+          # rubocop:disable Style/StringLiterals
+          "a"
+        RUBY
+      end
+
+      it 'excludes disabled offenses' do
+        expect(subject.size).to eq 1
+        expect(subject.first.cop_name).to eq 'Lint/MissingCopEnableDirective'
       end
     end
   end
