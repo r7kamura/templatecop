@@ -43,11 +43,13 @@ RSpec.describe Templatecop::PathFinder do
 
     context 'with directory path' do
       let(:patterns) do
-        %w[spec/fixtures]
+        %w[spec]
       end
 
-      it 'excludes directies' do
-        is_expected.to be_empty
+      it 'scans the directory for files matching the default patterns' do
+        is_expected.to eq(
+          [File.expand_path('spec/fixtures/dummy.slim')]
+        )
       end
     end
 
