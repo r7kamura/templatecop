@@ -6,21 +6,21 @@ require 'stringio'
 module Templatecop
   # Run investigation and auto-correction.
   class Runner
-    # @param [Boolean] auto_correct
+    # @param [Boolean] autocorrect
     # @param [Boolean] debug
     # @param [Array<String>] file_paths
     # @param [Object] formatter
     # @param [RuboCop::Config] rubocop_config
     # @param [#call] ruby_extractor
     def initialize(
-      auto_correct:,
+      autocorrect:,
       file_paths:,
       formatter:,
       rubocop_config:,
       ruby_extractor:,
       debug: false
     )
-      @auto_correct = auto_correct
+      @autocorrect = autocorrect
       @debug = debug
       @file_paths = file_paths
       @formatter = formatter
@@ -52,20 +52,21 @@ module Templatecop
       ::File.write(file_path, rewritten_source)
     end
 
-    # @param [Boolean] auto_correct
+    # @param [Boolean] autocorrect
+    # @param [Boolean] debug
     # @param [String] file_path
     # @param [String] rubocop_config
     # @param [String] source
     # @return [Array<Templatecop::Offense>]
     def investigate(
-      auto_correct:,
+      autocorrect:,
       debug:,
       file_path:,
       rubocop_config:,
       source:
     )
       TemplateOffenseCollector.new(
-        auto_correct: auto_correct,
+        autocorrect: autocorrect,
         debug: debug,
         file_path: file_path,
         rubocop_config: rubocop_config,
@@ -82,7 +83,7 @@ module Templatecop
           on_file_started(file_path)
           source = ::File.read(file_path)
           offenses = investigate(
-            auto_correct: @auto_correct,
+            autocorrect: @autocorrect,
             debug: @debug,
             file_path: file_path,
             rubocop_config: @rubocop_config,
@@ -91,7 +92,7 @@ module Templatecop
           offenses_per_file |= offenses
           break if offenses.select(&:correctable?).empty?
 
-          next unless @auto_correct
+          next unless @autocorrect
 
           correct(
             file_path: file_path,
@@ -106,7 +107,7 @@ module Templatecop
 
     # @return [Integer]
     def max_trials_count
-      if @auto_correct
+      if @autocorrect
         7 # What a heuristic number.
       else
         1

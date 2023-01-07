@@ -4,7 +4,7 @@ RSpec.describe Templatecop::RubyOffenseCollector do
   describe '#call' do
     subject do
       described_class.new(
-        auto_correct: false,
+        autocorrect: false,
         file_path: 'dummy.slim',
         rubocop_config: Templatecop::RuboCopConfigGenerator.new(
           default_configuration_path: File.expand_path('../fixtures/default.yml', __dir__),

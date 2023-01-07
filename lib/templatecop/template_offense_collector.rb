@@ -3,21 +3,21 @@
 module Templatecop
   # Collect RuboCop offenses from Template code.
   class TemplateOffenseCollector
-    # @param [Boolean] auto_correct
+    # @param [Boolean] autocorrect
     # @param [Boolean] debug
     # @param [String] file_path Template file path
     # @param [RuboCop::Config] rubocop_config
     # @param [#call] ruby_extractor
     # @param [String] source Template code
     def initialize(
-      auto_correct:,
+      autocorrect:,
       debug:,
       file_path:,
       rubocop_config:,
       ruby_extractor:,
       source:
     )
-      @auto_correct = auto_correct
+      @autocorrect = autocorrect
       @debug = debug
       @file_path = file_path
       @rubocop_config = rubocop_config
@@ -29,7 +29,7 @@ module Templatecop
     def call
       snippets.flat_map do |snippet|
         RubyOffenseCollector.new(
-          auto_correct: @auto_correct,
+          autocorrect: @autocorrect,
           debug: @debug,
           file_path: @file_path,
           rubocop_config: @rubocop_config,

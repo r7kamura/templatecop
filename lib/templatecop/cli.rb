@@ -69,7 +69,7 @@ module Templatecop
       ).call
 
       offenses = Runner.new(
-        auto_correct: options[:auto_correct],
+        autocorrect: options[:autocorrect],
         debug: options[:debug],
         file_paths: file_paths,
         formatter: formatter,
@@ -89,7 +89,7 @@ module Templatecop
       parser.banner = "Usage: #{@executable_name} [options] [file1, file2, ...]"
       parser.version = VERSION
       parser.on('-a', '--auto-correct', 'Auto-correct offenses.') do
-        options[:auto_correct] = true
+        options[:autocorrect] = true
       end
       parser.on('-c', '--config=', "Specify configuration file. (default: #{@default_configuration_path} or .rubocop.yml)") do |file_path|
         options[:forced_configuration_path] = file_path
