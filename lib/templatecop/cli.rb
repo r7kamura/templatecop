@@ -65,6 +65,7 @@ module Templatecop
       ).call
       file_paths = PathFinder.new(
         default_patterns: @default_path_patterns,
+        exclude_patterns: rubocop_config.for_all_cops['Exclude'],
         patterns: @argv
       ).call
 
