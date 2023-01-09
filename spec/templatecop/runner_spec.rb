@@ -8,7 +8,7 @@ RSpec.describe Templatecop::Runner do
   describe '#call' do
     subject do
       described_class.new(
-        auto_correct: false,
+        autocorrect: false,
         file_paths: file_paths,
         formatter: formatter,
         rubocop_config: rubocop_config,
