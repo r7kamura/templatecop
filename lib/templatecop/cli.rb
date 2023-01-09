@@ -70,6 +70,7 @@ module Templatecop
 
       offenses = Runner.new(
         auto_correct: options[:auto_correct],
+        debug: options[:debug],
         file_paths: file_paths,
         formatter: formatter,
         rubocop_config: rubocop_config,
@@ -95,6 +96,9 @@ module Templatecop
       end
       parser.on('--[no-]color', 'Force color output on or off.') do |value|
         options[:color] = value
+      end
+      parser.on('-d', '--debug', 'Display debug info.') do |value|
+        options[:debug] = value
       end
       parser.parse!(@argv)
       options

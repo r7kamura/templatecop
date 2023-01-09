@@ -4,21 +4,24 @@ require 'parallel'
 require 'stringio'
 
 module Templatecop
-  # Run investigation and auto-correcttion.
+  # Run investigation and auto-correction.
   class Runner
     # @param [Boolean] auto_correct
+    # @param [Boolean] debug
     # @param [Array<String>] file_paths
     # @param [Object] formatter
     # @param [RuboCop::Config] rubocop_config
     # @param [#call] ruby_extractor
     def initialize(
       auto_correct:,
+      debug: false,
       file_paths:,
       formatter:,
       rubocop_config:,
       ruby_extractor:
     )
       @auto_correct = auto_correct
+      @debug = debug
       @file_paths = file_paths
       @formatter = formatter
       @rubocop_config = rubocop_config
@@ -54,9 +57,16 @@ module Templatecop
     # @param [String] rubocop_config
     # @param [String] source
     # @return [Array<Templatecop::Offense>]
-    def investigate(auto_correct:, file_path:, rubocop_config:, source:)
+    def investigate(
+      auto_correct:,
+      debug:,
+      file_path:,
+      rubocop_config:,
+      source:
+    )
       TemplateOffenseCollector.new(
         auto_correct: auto_correct,
+        debug: debug,
         file_path: file_path,
         rubocop_config: rubocop_config,
         ruby_extractor: @ruby_extractor,
@@ -73,6 +83,7 @@ module Templatecop
           source = ::File.read(file_path)
           offenses = investigate(
             auto_correct: @auto_correct,
+            debug: @debug,
             file_path: file_path,
             rubocop_config: @rubocop_config,
             source: source
