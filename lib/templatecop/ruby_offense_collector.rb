@@ -6,11 +6,19 @@ module Templatecop
   # Collect RuboCop offenses from Ruby code.
   class RubyOffenseCollector
     # @param [Boolean] auto_correct
+    # @param [Boolean] debug
     # @param [String] file_path
     # @param [RuboCop::Config] rubocop_config
     # @param [String] source
-    def initialize(auto_correct:, file_path:, rubocop_config:, source:)
+    def initialize(
+      auto_correct:,
+      debug: false,
+      file_path:,
+      rubocop_config:,
+      source:
+    )
       @auto_correct = auto_correct
+      @debug = debug
       @file_path = file_path
       @rubocop_config = rubocop_config
       @source = source
@@ -57,6 +65,7 @@ module Templatecop
         registry,
         @rubocop_config,
         auto_correct: @auto_correct,
+        debug: @debug,
         display_cop_names: true,
         extra_details: true,
         stdin: ''
