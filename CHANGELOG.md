@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0 - 2023-01-10
+
 ### Added
 
 - Add CLI switches for debug mode.
