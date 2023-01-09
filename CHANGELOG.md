@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added
+
+- Add CLI switches for debug mode.
+- Add directory support for PathFinder.
+
+### Fixed
+
+- Add compatibility for RuboCop v1.38.0 and above.
+- Display correct label when autocorrecting.
+- Respect AllCops Exclude pattern.
+
 ## 0.3.0 - 2022-03-14
 
 ### Added
