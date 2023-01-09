@@ -14,11 +14,11 @@ module Templatecop
     # @param [#call] ruby_extractor
     def initialize(
       auto_correct:,
-      debug: false,
       file_paths:,
       formatter:,
       rubocop_config:,
-      ruby_extractor:
+      ruby_extractor:,
+      debug: false
     )
       @auto_correct = auto_correct
       @debug = debug

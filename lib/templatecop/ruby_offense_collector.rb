@@ -12,10 +12,10 @@ module Templatecop
     # @param [String] source
     def initialize(
       auto_correct:,
-      debug: false,
       file_path:,
       rubocop_config:,
-      source:
+      source:,
+      debug: false
     )
       @auto_correct = auto_correct
       @debug = debug
