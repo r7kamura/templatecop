@@ -5,12 +5,17 @@ RSpec.describe Templatecop::PathFinder do
     subject do
       described_class.new(
         default_patterns: default_patterns,
+        exclude_patterns: exclude_patterns,
         patterns: patterns
       ).call
     end
 
     let(:default_patterns) do
       %w[**/*.slim]
+    end
+
+    let(:exclude_patterns) do
+      []
     end
 
     let(:patterns) do
@@ -38,6 +43,20 @@ RSpec.describe Templatecop::PathFinder do
         is_expected.to eq(
           [File.expand_path('spec/fixtures/dummy.slim')]
         )
+      end
+    end
+
+    context 'with glob and exclude pattern' do
+      let(:patterns) do
+        %w[spec/**/*.slim]
+      end
+
+      let(:exclude_patterns) do
+        %w[spec/fixtures/**/*]
+      end
+
+      it 'is empty' do
+        is_expected.to be_empty
       end
     end
 

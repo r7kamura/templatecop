@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pathname'
+require 'set'
 
 module Templatecop
   # Collect file paths from given path patterns.
@@ -9,22 +10,44 @@ module Templatecop
     # @param [Array<String>] patterns Patterns normally given as CLI arguments (e.g. `["app/views/**/*.html.template"]`).
     def initialize(
       default_patterns:,
+      exclude_patterns:,
       patterns:
     )
       @default_patterns = default_patterns
+      @exclude_patterns = exclude_patterns || []
       @patterns = patterns
     end
 
     # @return [Array<String>]
     def call
-      patterns.flat_map do |pattern|
-        ::Pathname.glob(pattern).select(&:file?).map do |pathname|
-          pathname.expand_path.to_s
-        end
-      end.uniq.sort
+      matching_paths(patterns) do |path|
+        !excluded?(path)
+      end.sort
     end
 
     private
+
+    # @return [Set<String>]
+    def excluded
+      @excluded ||= matching_paths(@exclude_patterns)
+    end
+
+    # @return [TrueClass,FalseClass]
+    def excluded?(path)
+      excluded.include?(path)
+    end
+
+    # @return [Set<String>]
+    def matching_paths(patterns, &block)
+      patterns.each_with_object(Set.new) do |pattern, set|
+        ::Pathname.glob(pattern) do |pathname|
+          next unless pathname.file?
+
+          path = pathname.expand_path.to_s
+          set.add(path) if block.nil? || block.call(path)
+        end
+      end
+    end
 
     # @return [Array<String>]
     def patterns
