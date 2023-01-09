@@ -28,10 +28,14 @@ module Templatecop
 
     # @return [Array<String>]
     def patterns
-      if @patterns.empty?
-        @default_patterns
-      else
-        @patterns
+      return @default_patterns if @patterns.empty?
+
+      @patterns.map do |pattern|
+        next pattern unless File.directory?(pattern)
+
+        @default_patterns.map do |default|
+          File.join(pattern, default)
+        end.flatten
       end
     end
   end
