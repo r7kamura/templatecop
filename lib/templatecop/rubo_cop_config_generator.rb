@@ -47,7 +47,7 @@ module Templatecop
       if instance_variable_defined?(:@user_config)
         @user_config
       else
-        @user_config = \
+        @user_config =
           if @forced_configuration_path
             ::RuboCop::ConfigLoader.load_file(@forced_configuration_path)
           elsif (path = implicit_configuration_path)
